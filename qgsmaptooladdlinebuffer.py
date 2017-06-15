@@ -39,17 +39,12 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
         line_wkt = self.captureCurve().curveToLine().asWkt()
         self.stopCapturing();
-        
-        crs_line = self.canvas().mapSettings().destinationCrs()
-        crs_dest = vlayer.crs()
-        
+
         g = QgsGeometry.fromWkt(line_wkt)
-        if crs_line != crs_dest:
-            g.transform(QgsCoordinateTransform(crs_line, crs_dest))
 
         qgis_settings = QSettings()
         buffer_size = qgis_settings.value(settings.buffer_size_key, type=float)
-        buffer_size *= QGis.fromUnitToUnitFactor(QGis.Meters, crs_dest.mapUnits())
+        buffer_size *= QGis.fromUnitToUnitFactor(QGis.Meters, vlayer.crs().mapUnits())
         
         buffer = g.buffer(buffer_size, -1)
         
