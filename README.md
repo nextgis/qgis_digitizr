@@ -1,0 +1,2 @@
+# qgis.digitizr
+Digitiz!
