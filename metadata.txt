@@ -12,7 +12,7 @@ name=Digitizr
 qgisMinimumVersion=2.14
 description=
 about=
-version=0.0.1
+version=0.0.2
 author=NextGIS
 email=info@nextgis.com
 

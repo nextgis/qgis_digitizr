@@ -72,11 +72,17 @@ class DigitizrPlugin:
 
     def showToolAddLineBufferButtonSettings(self):
         qgis_settings = QSettings()
+
+        buffer_size = qgis_settings.value(settings.buffer_size_key)
+        if buffer_size is None:
+            buffer_size = 0.0
+        buffer_size = float(buffer_size)
+
         buffer_size, result = QInputDialog.getDouble(
             self._iface.mainWindow(),
             self.tr("Add line buffer settings"),
             self.tr("Buffer size (meters):"),
-            qgis_settings.value(settings.buffer_size_key, type=float)
+            buffer_size
         )
 
         if result:

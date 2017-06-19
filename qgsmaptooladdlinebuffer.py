@@ -43,7 +43,11 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         g = QgsGeometry.fromWkt(line_wkt)
 
         qgis_settings = QSettings()
-        buffer_size = qgis_settings.value(settings.buffer_size_key, type=float)
+        buffer_size = qgis_settings.value(settings.buffer_size_key)
+        if buffer_size is None:
+            buffer_size = 0.0
+        buffer_size = float(buffer_size)
+
         buffer_size *= QGis.fromUnitToUnitFactor(QGis.Meters, vlayer.crs().mapUnits())
         
         buffer = g.buffer(buffer_size, -1)
