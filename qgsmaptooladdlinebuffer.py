@@ -40,18 +40,17 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         line_wkt = self.captureCurve().curveToLine().asWkt()
         self.stopCapturing();
 
-        g = QgsGeometry.fromWkt(line_wkt)
-
         qgis_settings = QSettings()
         buffer_size = qgis_settings.value(settings.buffer_size_key)
         if buffer_size is None:
             buffer_size = 0.0
         buffer_size = float(buffer_size)
 
-        buffer_size *= QGis.fromUnitToUnitFactor(QGis.Meters, vlayer.crs().mapUnits())
-        
+        g = QgsGeometry.fromWkt(line_wkt)
+        g.transform(QgsCoordinateTransform(vlayer.crs(), QgsCoordinateReferenceSystem(3857, QgsCoordinateReferenceSystem.EpsgCrsId)))
         buffer = g.buffer(buffer_size, -1)
-        
+        buffer.transform(QgsCoordinateTransform(QgsCoordinateReferenceSystem(3857, QgsCoordinateReferenceSystem.EpsgCrsId), vlayer.crs()))
+
         f = QgsFeature(vlayer.fields())
         f.setGeometry(buffer)
         

@@ -12,7 +12,7 @@ name=Digitizr
 qgisMinimumVersion=2.14
 description=
 about=
-version=0.0.2
+version=0.0.3
 author=NextGIS
 email=info@nextgis.com
 
@@ -26,9 +26,9 @@ changelog=
 # Tags are comma separated with spaces allowed
 tags=nextgis, digitize, tool
 
-homepage=
-tracker=
-repository=
+homepage=https://github.com/nextgis/qgis.digitizr
+tracker=https://github.com/nextgis/qgis.digitizr/issues
+repository=https://github.com/nextgis/qgis.digitizr
 icon=icon.png
 
 # experimental flag
