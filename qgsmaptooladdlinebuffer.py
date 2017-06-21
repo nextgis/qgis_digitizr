@@ -47,9 +47,9 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         buffer_size = float(buffer_size)
 
         g = QgsGeometry.fromWkt(line_wkt)
-        g.transform(QgsCoordinateTransform(vlayer.crs(), QgsCoordinateReferenceSystem(3857, QgsCoordinateReferenceSystem.EpsgCrsId)))
+        g.transform(QgsCoordinateTransform(vlayer.crs(), self.canvas().mapSettings().destinationCrs() ))
         buffer = g.buffer(buffer_size, -1)
-        buffer.transform(QgsCoordinateTransform(QgsCoordinateReferenceSystem(3857, QgsCoordinateReferenceSystem.EpsgCrsId), vlayer.crs()))
+        buffer.transform(QgsCoordinateTransform(self.canvas().mapSettings().destinationCrs(), vlayer.crs()))
 
         f = QgsFeature(vlayer.fields())
         f.setGeometry(buffer)
