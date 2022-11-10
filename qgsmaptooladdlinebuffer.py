@@ -1,31 +1,34 @@
-from PyQt4.QtCore import *
+from __future__ import absolute_import
+from qgis.PyQt.QtCore import pyqtSignal, Qt, QSettings
 
-from qgis.core import *
+from qgis.core import QgsGeometry, QgsCoordinateTransform, QgsFeature, QgsWkbTypes, QgsProject
 from qgis.gui import *
 
-import settings
+from . import settings
 
 class QgsMapToolAddLineBuffer(QgsMapToolCapture):
     availabilityChange = pyqtSignal(bool)
 
     def __init__(self, canvas, cadDockWidget):
-        QgsMapToolCapture.__init__(self, canvas, cadDockWidget, QgsMapToolAdvancedDigitizing.CaptureLine)
+        QgsMapToolCapture.__init__(self, canvas, cadDockWidget, QgsMapToolCapture.CaptureMode.CaptureLine)        
+        
         self.mToolName = "Add line buffer"
         
         self.canvas().currentLayerChanged.connect(self.checkAvailability)
         self.canvas().mapCanvasRefreshed.connect(self.checkAvailability)
+        
 
     def activate(self):
         super(QgsMapToolAddLineBuffer, self).activate()
 
     def cadCanvasReleaseEvent(self, event):
         vlayer = self.currentVectorLayer()
-
+        
         if not vlayer:
             self.notifyNotVectorLayer()
             return;
         if not vlayer.isEditable():
-            self.notifyNotEditableLayer()
+            self.notifyNotEditableLayer()            
             return;
 
         if event.button() == Qt.LeftButton:
@@ -47,9 +50,12 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         buffer_size = float(buffer_size)
 
         g = QgsGeometry.fromWkt(line_wkt)
-        g.transform(QgsCoordinateTransform(vlayer.crs(), self.canvas().mapSettings().destinationCrs() ))
+        transform_1 = QgsCoordinateTransform(vlayer.crs(), self.canvas().mapSettings().destinationCrs(), QgsProject.instance() )
+        transform_2 = QgsCoordinateTransform(self.canvas().mapSettings().destinationCrs(), vlayer.crs(), QgsProject.instance())
+        
+        g.transform(transform_1)        
         buffer = g.buffer(buffer_size, -1)
-        buffer.transform(QgsCoordinateTransform(self.canvas().mapSettings().destinationCrs(), vlayer.crs()))
+        buffer.transform(transform_2)        
 
         f = QgsFeature(vlayer.fields())
         f.setGeometry(buffer)
@@ -72,7 +78,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         if not vlayer.isEditable():
             return False
 
-        if vlayer.geometryType() != QGis.Polygon:
+        if vlayer.geometryType() != QgsWkbTypes.GeometryType.PolygonGeometry:
             return False
 
         return True
