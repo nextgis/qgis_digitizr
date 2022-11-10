@@ -9,8 +9,7 @@
 
 [general]
 name=Digitizr
-qgisMinimumVersion=3.4
-qgisMaximumVersion=3.99
+qgisMinimumVersion=3.16
 description=Digitize a line and have a buffer around it immediately at set width.
 about=A set of digitizing tools (currently one) to speed up certain tasks. Contact us to add more to it: https://nextgis.com/contact
 version=0.0.5
