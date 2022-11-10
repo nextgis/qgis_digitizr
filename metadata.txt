@@ -26,9 +26,9 @@ changelog=
 # Tags are comma separated with spaces allowed
 tags=nextgis, digitize, tool, buffer
 
-homepage=https://github.com/nextgis/qgis.digitizr
-tracker=https://github.com/nextgis/qgis.digitizr/issues
-repository=https://github.com/nextgis/qgis.digitizr
+homepage=https://github.com/nextgis/qgis_digitizr
+tracker=https://github.com/nextgis/qgis_digitizr/issues
+repository=https://github.com/nextgis/qgis_digitizr
 icon=icons/plugin.png
 
 # experimental flag
