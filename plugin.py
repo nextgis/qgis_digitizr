@@ -1,13 +1,15 @@
+from __future__ import absolute_import
+from builtins import object
 import os
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+from .qgsmaptooladdlinebuffer import QgsMapToolAddLineBuffer
 
-from qgsmaptooladdlinebuffer import QgsMapToolAddLineBuffer
+from . import settings
 
-import settings
-
-class DigitizrPlugin:
+class DigitizrPlugin(object):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):

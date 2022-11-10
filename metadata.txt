@@ -9,7 +9,7 @@
 
 [general]
 name=Digitizr
-qgisMinimumVersion=2.14
+qgisMinimumVersion=3.4
 description=Digitize a line and have a buffer around it immediately at set width.
 about=A set of digitizing tools (currently one) to speed up certain tasks. Contact us to add more to it: https://nextgis.com/contact
 version=0.0.4
@@ -29,7 +29,7 @@ tags=nextgis, digitize, tool, buffer
 homepage=https://github.com/nextgis/qgis.digitizr
 tracker=https://github.com/nextgis/qgis.digitizr/issues
 repository=https://github.com/nextgis/qgis.digitizr
-icon=icon.png
+icon=icons/plugin.png
 
 # experimental flag
 experimental=False
