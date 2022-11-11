@@ -1,27 +1,16 @@
-# This file contains metadata for your plugin. Since 
-# version 2.0 of QGIS this is the proper way to supply 
-# information about a plugin. The old method of 
-# embedding metadata in __init__.py will 
-# is no longer supported since version 2.0.
-
-# This file should be included when you package your plugin.
-# Mandatory items:
-
 [general]
 name=Digitizr
 qgisMinimumVersion=3.16
+qgisMaximumVersion=3.99
 description=Digitize a line and have a buffer around it immediately at set width.
 about=A set of digitizing tools (currently one) to speed up certain tasks. Contact us to add more to it: https://nextgis.com/contact
 version=0.0.5
 author=NextGIS
 email=info@nextgis.com
 
-# End of mandatory metadata
-
-# Optional items:
-
-# Uncomment the following line and add your changelog:
-changelog=0.0.5 Port to QGIS3
+changelog=
+        0.0.5 
+              * Port to QGIS3
 
 # Tags are comma separated with spaces allowed
 tags=nextgis, digitize, tool, buffer
