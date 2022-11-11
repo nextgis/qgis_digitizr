@@ -1,13 +1,13 @@
 # qgis.digitizr
 Digitizr!
 
-Draw a line. Have it automatically buffered with given buffer size. Activate a polygon layer while drawing.
+Draw a line. Have it automatically buffered with given buffer size. Expects an existing and active polygon layer.
 
 Functionality
 -------------
 Digitizr can:
 
-* Draw buffered lines in polygon layer
+* Draw buffered lines in a polygon layer
 
 License
 -------
