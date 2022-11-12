@@ -1,4 +1,4 @@
-# qgis.digitizr
+# Digitizr
 Digitizr!
 
 Draw a line. Have it automatically buffered with given buffer size. Expects an existing and active polygon layer.
@@ -15,6 +15,8 @@ This program is licensed under GNU GPL v2 or any later version
 
 Commercial support
 ------------------
-Need to fix a bug or add a feature to NextGIS Connect? We provide custom development and support for this software. [Contact us](http://nextgis.com/contact/) to discuss options!
+Need to fix a bug or add a feature to NextGIS Connect? 
 
-[![http://nextgis.com](http://nextgis.com/img/nextgis.png)](http://nextgis.com)
+We provide custom development and support for this software. [Contact us](https://nextgis.com/contact/) to discuss options!
+
+[![https://nextgis.com](https://nextgis.com/img/nextgis.png)](https://nextgis.com)
