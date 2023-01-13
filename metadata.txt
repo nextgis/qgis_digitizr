@@ -2,8 +2,8 @@
 name=Digitizr
 qgisMinimumVersion=3.16
 qgisMaximumVersion=3.99
-description=Digitize a line and have a buffer around it immediately at set width.
-about=A set of digitizing tools (currently one) to speed up certain tasks. Contact us to add more to it: https://nextgis.com/contact
+description=Digitize a line and have a buffer around it immediately
+about=Digitize a line and have a buffer around it immediately at set width stored in a polygonal layer. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
 version=0.0.5
 author=NextGIS
 email=info@nextgis.com
