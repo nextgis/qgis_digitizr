@@ -30,14 +30,17 @@ class DigitizrPlugin(object):
 
     def initGui(self):
         self.toolAddLineBuffer = QgsMapToolAddLineBuffer(self._iface.mapCanvas(), self._iface.cadDockWidget())
-        
         self.addToolAddLineBufferButton()
 
         self._iface.mapCanvas().mapToolSet.connect(self.disableTools)
 
     def unload(self):
         self.removeToolAddLineBufferButton()
-    
+        for action in [self.actionAddLineBuffer, self.actionAddLineBufferSettings]:
+            self._iface.removePluginMenu(self.tr('&Digitizr'), action)
+            self._iface.removeToolBarIcon(action)
+            self._iface.unregisterMainWindowAction(action)
+
     def disableTools(self, new_tool):
         if new_tool != self.toolAddLineBuffer:
             self.actionAddLineBuffer.setChecked(False)
