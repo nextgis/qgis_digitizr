@@ -6,34 +6,36 @@ from qgis.gui import *
 
 from . import settings
 
+
 class QgsMapToolAddLineBuffer(QgsMapToolCapture):
     availabilityChange = pyqtSignal(bool)
 
     def __init__(self, canvas, cadDockWidget):
-        QgsMapToolCapture.__init__(self, canvas, cadDockWidget, QgsMapToolCapture.CaptureMode.CaptureLine)        
-        
+        QgsMapToolCapture.__init__(self, canvas, cadDockWidget, QgsMapToolCapture.CaptureMode.CaptureLine)
+
         self.mToolName = "Add line buffer"
-        
-        self.canvas().currentLayerChanged.connect(self.checkAvailability)
+        self.canvas().layersChanged.connect(self.changeLayer)
+        self.canvas().selectionChanged.connect(self.changeLayer)
+        self.canvas().currentLayerChanged.connect(self.changeLayer)
         self.canvas().mapCanvasRefreshed.connect(self.checkAvailability)
-        
+        self.canvas().keyReleased.connect(self.checkAvailability)
 
     def activate(self):
         super(QgsMapToolAddLineBuffer, self).activate()
 
     def cadCanvasReleaseEvent(self, event):
         vlayer = self.currentVectorLayer()
-        
+
         if not vlayer:
             self.notifyNotVectorLayer()
             return;
         if not vlayer.isEditable():
-            self.notifyNotEditableLayer()            
+            self.notifyNotEditableLayer()
             return;
 
         if event.button() == Qt.LeftButton:
-            error = self.addVertex( event.mapPoint(), event.mapPointMatch() );
-            #TODO Process error
+            error = self.addVertex(event.mapPoint(), event.mapPointMatch());
+            # TODO Process error
             self.startCapturing();
             return
         elif event.button() != Qt.RightButton:
@@ -50,17 +52,19 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         buffer_size = float(buffer_size)
 
         g = QgsGeometry.fromWkt(line_wkt)
-        transform_1 = QgsCoordinateTransform(vlayer.crs(), self.canvas().mapSettings().destinationCrs(), QgsProject.instance() )
-        transform_2 = QgsCoordinateTransform(self.canvas().mapSettings().destinationCrs(), vlayer.crs(), QgsProject.instance())
-        
-        g.transform(transform_1)        
+        transform_1 = QgsCoordinateTransform(vlayer.crs(), self.canvas().mapSettings().destinationCrs(),
+                                             QgsProject.instance())
+        transform_2 = QgsCoordinateTransform(self.canvas().mapSettings().destinationCrs(), vlayer.crs(),
+                                             QgsProject.instance())
+
+        g.transform(transform_1)
         buffer = g.buffer(buffer_size, -1)
-        buffer.transform(transform_2)        
+        buffer.transform(transform_2)
 
         f = QgsFeature(vlayer.fields())
         f.setGeometry(buffer)
-        
-        vlayer.beginEditCommand( "Add line buffer" )
+
+        vlayer.beginEditCommand("Add line buffer")
         res = vlayer.addFeature(f)
 
         vlayer.endEditCommand()
@@ -68,6 +72,18 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
     def checkAvailability(self):
         self.availabilityChange.emit(self.isAvalable())
+
+    def changeLayer(self):
+        self.currLayer = self.currentVectorLayer()
+        self.availabilityChange.emit(self.isAvalable())
+        if self.currLayer:
+            self.currLayer.editingStarted.connect(self.checkAvailability)
+            self.currLayer.editCommandEnded.connect(self.checkAvailability)
+            self.currLayer.editCommandDestroyed.connect(self.checkAvailability)
+            self.currLayer.editingStopped.connect(self.checkAvailability)
+            self.currLayer.selectionChanged.connect(self.checkAvailability)
+
+
 
     def isAvalable(self):
         vlayer = self.currentVectorLayer()
@@ -82,4 +98,3 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             return False
 
         return True
-
