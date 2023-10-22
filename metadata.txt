@@ -3,13 +3,15 @@ name=Digitizr
 qgisMinimumVersion=3.16
 qgisMaximumVersion=3.99
 description=Digitize a line and have a buffer around it immediately
+description[ru]=Оцифруйте строку и немедленно создайте вокруг нее буфер.
 about=Digitize a line and have a buffer around it immediately at set width stored in a polygonal layer. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
+about[ru]=Оцифруйте линию и немедленно создайте вокруг нее буфер заданной ширины, хранящийся в полигональном слое. Разработан компанией NextGIS. Любые отзывы приветствуются на https://nextgis.com/contact.
 version=0.0.5
 author=NextGIS
 email=info@nextgis.com
 
 changelog=
-        0.0.5 
+        0.0.5
               * Port to QGIS3
 
 # Tags are comma separated with spaces allowed
@@ -18,6 +20,8 @@ tags=nextgis, digitize, tool, buffer
 homepage=https://github.com/nextgis/qgis_digitizr
 tracker=https://github.com/nextgis/qgis_digitizr/issues
 repository=https://github.com/nextgis/qgis_digitizr
+video=https://youtu.be/rZ__hHaf29M
+video[ru]=https://youtu.be/jRQ6BOvpSBI
 #icon=icons/plugin.png
 
 # experimental flag
