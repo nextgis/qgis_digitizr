@@ -25,17 +25,7 @@ class DigitizrPlugin(object):
         self.menu = 'Digitizr'
 
     def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-
-        We implement this ourselves since we do not inherit QObject.
-
-        :param message: String for translation.
-        :type message: str, QString
-
-        :returns: Translated version of message.
-        :rtype: QString
-        """
-        return QCoreApplication.translate('NGConnectPlugin', message)
+        return QCoreApplication.translate(__class__.__name__, message)
 
     def initGui(self):
         self.toolAddLineBuffer = QgsMapToolAddLineBuffer(self._iface.mapCanvas(), self._iface.cadDockWidget())
@@ -80,7 +70,7 @@ class DigitizrPlugin(object):
         self.actionAddLineBufferSettings.setIcon(QIcon(os.path.join(settings.icons_dir, "settings.svg")))
         self.actionAddLineBufferSettings.triggered.connect(self.showToolAddLineBufferButtonSettings)
 
-        self.actionAbout = QAction(QCoreApplication.translate("NGConnectPlugin", "About"), self._iface.mainWindow())
+        self.actionAbout = QAction(self.tr("About"), self._iface.mainWindow())
         self.actionAbout.triggered.connect(self.about)
 
         self.m = self.toolAddLineBufferButton.menu()

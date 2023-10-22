@@ -48,27 +48,27 @@
 <context>
     <name>DigitizrPlugin</name>
     <message>
-        <location filename="../plugin.py" line="67"/>
+        <location filename="../plugin.py" line="61"/>
         <source>Add line buffer</source>
         <translation>Добавить строковый буфер</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="75"/>
+        <location filename="../plugin.py" line="69"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="74"/>
+        <location filename="../plugin.py" line="73"/>
         <source>About</source>
-        <translation type="obsolete">О модуле...</translation>
+        <translation>О модуле...</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="124"/>
+        <location filename="../plugin.py" line="115"/>
         <source>Add line buffer settings</source>
         <translation>Настройки добавления строкового буфера</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="124"/>
+        <location filename="../plugin.py" line="115"/>
         <source>Buffer size (meters):</source>
         <translation>Размер буфера (метры):</translation>
     </message>
@@ -78,7 +78,7 @@
     <message>
         <location filename="../plugin.py" line="79"/>
         <source>About</source>
-        <translation>О модуле...</translation>
+        <translation type="obsolete">О модуле...</translation>
     </message>
 </context>
 </TS>
