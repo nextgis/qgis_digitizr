@@ -50,7 +50,7 @@ class DigitizrPlugin(object):
         self.toolAddLineBufferButton = QToolButton()
         self.toolAddLineBufferButton.setMenu(QMenu())
         self.toolAddLineBufferButton.setPopupMode(QToolButton.MenuButtonPopup)
-        self._iface.addToolBarWidget(self.toolAddLineBufferButton)
+        self.toolbarActionAddLineBuff = self._iface.addToolBarWidget(self.toolAddLineBufferButton)
 
         self.actionAddLineBuffer = QAction(self.tr("Add line buffer"), self._iface.mainWindow())
         self.actionAddLineBuffer.setIcon(QIcon(os.path.join(settings.icons_dir, "line_buffer.svg")))
@@ -70,7 +70,7 @@ class DigitizrPlugin(object):
         self.toolAddLineBufferButton.setDefaultAction(self.actionAddLineBuffer)
 
     def removeToolAddLineBufferButton(self):
-        self._iface.removeToolBarIcon(self.actionAddLineBuffer)
+        self._iface.removeToolBarIcon(self.toolbarActionAddLineBuff)
 
     def showToolAddLineBufferButtonSettings(self):
         qgis_settings = QSettings()
