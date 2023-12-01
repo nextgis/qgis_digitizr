@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from builtins import object
 import os
 
 from os import path
@@ -14,7 +13,7 @@ from . import settings
 from . import about_dialog
 
 
-class DigitizrPlugin(object):
+class DigitizrPlugin:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -70,7 +69,7 @@ class DigitizrPlugin(object):
         self.actionAddLineBufferSettings.setIcon(QIcon(os.path.join(settings.icons_dir, "settings.svg")))
         self.actionAddLineBufferSettings.triggered.connect(self.showToolAddLineBufferButtonSettings)
 
-        self.actionAbout = QAction(self.tr("About"), self._iface.mainWindow())
+        self.actionAbout = QAction(self.tr("About…"), self._iface.mainWindow())
         self.actionAbout.triggered.connect(self.about)
 
         self.m = self.toolAddLineBufferButton.menu()
