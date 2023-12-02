@@ -139,6 +139,7 @@ class DigitizrPlugin:
 
     def __init_tool_button(self, settings: DigitizrSettings) -> None:
         assert self.__toolbar is not None
+        assert self.__tool_action is not None
 
         tool_button = QToolButton(self.__toolbar)
         tool_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
@@ -146,6 +147,7 @@ class DigitizrPlugin:
             QToolButton.ToolButtonPopupMode.MenuButtonPopup
         )
         tool_button.setDefaultAction(self.__tool_action)
+        self.__tool_action.toggled.connect(tool_button.setChecked)
         self.__toolbar.addWidget(tool_button)
         self.toolAddLineBuffer.availabilityChanged.connect(
             tool_button.setEnabled
