@@ -1,68 +1,108 @@
-from __future__ import absolute_import
-from qgis.PyQt.QtCore import pyqtSignal, Qt, QSettings
+from typing import Optional, cast
 
-from qgis.core import QgsGeometry, QgsCoordinateTransform, QgsFeature, QgsWkbTypes, QgsProject
-from qgis.gui import *
+from qgis.PyQt.QtCore import pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QAction
 
-from . import settings
+from qgis.core import (
+    QgsGeometry, QgsCoordinateTransform, QgsFeature, QgsWkbTypes, QgsProject,
+    QgsVectorDataProvider, Qgis, QgsVectorLayer
+)
+from qgis.gui import (
+    QgsMapToolCapture, QgsMapCanvas, QgsAdvancedDigitizingDockWidget,
+    QgsMapMouseEvent, QgisInterface
+)
+from qgis.utils import iface
+iface = cast(QgisInterface, iface)
 
 
 class QgsMapToolAddLineBuffer(QgsMapToolCapture):
-    availabilityChange = pyqtSignal(bool)
+    availabilityChanged = pyqtSignal(bool)
 
-    def __init__(self, canvas, cadDockWidget):
-        QgsMapToolCapture.__init__(self, canvas, cadDockWidget, QgsMapToolCapture.CaptureMode.CaptureLine)
+    __buffer_width: float
+    __cap_style: Qgis.EndCapStyle
+    __join_style: Qgis.JoinStyle
 
-        self.mToolName = "Add line buffer"
-        self.canvas().layersChanged.connect(self.changeLayer)
-        self.canvas().selectionChanged.connect(self.changeLayer)
-        self.canvas().currentLayerChanged.connect(self.changeLayer)
-        self.canvas().mapCanvasRefreshed.connect(self.checkAvailability)
-        self.canvas().keyReleased.connect(self.checkAvailability)
+    def __init__(
+        self,
+        canvas: QgsMapCanvas,
+        cadDockWidget: QgsAdvancedDigitizingDockWidget
+    ) -> None:
+        super().__init__(
+            canvas, cadDockWidget, QgsMapToolCapture.CaptureMode.CaptureLine
+        )
 
-    def activate(self):
-        super(QgsMapToolAddLineBuffer, self).activate()
+        self.__buffer_width = 10.0
+        self.__cap_style = Qgis.EndCapStyle.Round
+        self.__join_style = Qgis.JoinStyle.Round
 
-    def cadCanvasReleaseEvent(self, event):
+        canvas.currentLayerChanged.connect(self.checkAvailability)
+
+        main_window = iface.mainWindow()
+        assert main_window is not None
+        add_feature_action = main_window.findChild(
+            QAction, 'mActionToggleEditing'
+        )
+        assert add_feature_action is not None
+        add_feature_action.toggled.connect(
+            self.checkAvailability,
+            type=Qt.ConnectionType.QueuedConnection  # type: ignore
+        )
+
+    def set_buffer_width(self, width: float) -> None:
+        self.__buffer_width = width
+
+    def set_cap_style(self, cap_style: Qgis.EndCapStyle) -> None:
+        self.__cap_style = cap_style
+
+    def set_join_style(self, join_style: Qgis.JoinStyle) -> None:
+        self.__join_style = join_style
+
+    def cadCanvasReleaseEvent(self, event: Optional[QgsMapMouseEvent]) -> None:
         vlayer = self.currentVectorLayer()
 
-        if not vlayer:
+        if vlayer is None:
             self.notifyNotVectorLayer()
-            return;
+            return
         if not vlayer.isEditable():
             self.notifyNotEditableLayer()
-            return;
+            return
 
         if event.button() == Qt.LeftButton:
-            error = self.addVertex(event.mapPoint(), event.mapPointMatch());
+            error = self.addVertex(event.mapPoint(), event.mapPointMatch())
             # TODO Process error
-            self.startCapturing();
+            self.startCapturing()
             return
         elif event.button() != Qt.RightButton:
             self.deleteTempRubberBand()
             return
 
         line_wkt = self.captureCurve().curveToLine().asWkt()
-        self.stopCapturing();
+        self.stopCapturing()
 
-        qgis_settings = QSettings()
-        buffer_size = qgis_settings.value(settings.buffer_size_key)
-        if buffer_size is None:
-            buffer_size = 0.0
-        buffer_size = float(buffer_size)
+        line_geometry = QgsGeometry.fromWkt(line_wkt)
+        transform_1 = QgsCoordinateTransform(
+            vlayer.crs(),
+            self.canvas().mapSettings().destinationCrs(),
+            QgsProject.instance()
+        )
+        transform_2 = QgsCoordinateTransform(
+            self.canvas().mapSettings().destinationCrs(),
+            vlayer.crs(),
+            QgsProject.instance()
+        )
 
-        g = QgsGeometry.fromWkt(line_wkt)
-        transform_1 = QgsCoordinateTransform(vlayer.crs(), self.canvas().mapSettings().destinationCrs(),
-                                             QgsProject.instance())
-        transform_2 = QgsCoordinateTransform(self.canvas().mapSettings().destinationCrs(), vlayer.crs(),
-                                             QgsProject.instance())
-
-        g.transform(transform_1)
-        buffer = g.buffer(buffer_size, -1)
-        buffer.transform(transform_2)
+        line_geometry.transform(transform_1)
+        buffer_geometry = line_geometry.buffer(
+            distance=self.__buffer_width,
+            segments=10,
+            endCapStyle=self.__cap_style,
+            joinStyle=self.__join_style,
+            miterLimit=2
+        )
+        buffer_geometry.transform(transform_2)
 
         f = QgsFeature(vlayer.fields())
-        f.setGeometry(buffer)
+        f.setGeometry(buffer_geometry)
 
         vlayer.beginEditCommand("Add line buffer")
         res = vlayer.addFeature(f)
@@ -71,30 +111,32 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         self.canvas().refresh()
 
     def checkAvailability(self):
-        self.availabilityChange.emit(self.isAvalable())
-
-    def changeLayer(self):
-        self.currLayer = self.currentVectorLayer()
-        self.availabilityChange.emit(self.isAvalable())
-        if self.currLayer:
-            self.currLayer.editingStarted.connect(self.checkAvailability)
-            self.currLayer.editCommandEnded.connect(self.checkAvailability)
-            self.currLayer.editCommandDestroyed.connect(self.checkAvailability)
-            self.currLayer.editingStopped.connect(self.checkAvailability)
-            self.currLayer.selectionChanged.connect(self.checkAvailability)
-
-
+        self.availabilityChanged.emit(self.isAvalable())
 
     def isAvalable(self):
-        vlayer = self.currentVectorLayer()
+        current_layer = self.currentVectorLayer()
 
-        if not vlayer:
+        if current_layer is None:
             return False
 
-        if not vlayer.isEditable():
+        if not current_layer.isEditable():
             return False
 
-        if vlayer.geometryType() != QgsWkbTypes.GeometryType.PolygonGeometry:
+        if not self.__is_layer_suitable(current_layer):
             return False
 
+        return True
+
+    def __is_layer_suitable(self, layer: QgsVectorLayer) -> bool:
+        PolygonGeometry = QgsWkbTypes.GeometryType.PolygonGeometry
+        if layer.geometryType() != PolygonGeometry:
+            return False
+
+        data_provider = layer.dataProvider()
+        if data_provider is None:
+            return False
+
+        Capability = QgsVectorDataProvider.Capability
+        if not bool(data_provider.capabilities() & Capability.AddFeatures):
+            return False
         return True
