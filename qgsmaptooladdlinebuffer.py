@@ -5,13 +5,15 @@ from qgis.PyQt.QtWidgets import QAction
 
 from qgis.core import (
     QgsGeometry, QgsCoordinateTransform, QgsFeature, QgsWkbTypes, QgsProject,
-    QgsVectorDataProvider, Qgis, QgsVectorLayer
+    QgsVectorDataProvider, Qgis, QgsVectorLayer, QgsDistanceArea
 )
 from qgis.gui import (
     QgsMapToolCapture, QgsMapCanvas, QgsAdvancedDigitizingDockWidget,
     QgsMapMouseEvent, QgisInterface
 )
 from qgis.utils import iface
+
+
 iface = cast(QgisInterface, iface)
 
 
@@ -57,6 +59,15 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
     def set_join_style(self, join_style: Qgis.JoinStyle) -> None:
         self.__join_style = join_style
 
+    def convert_distance(self):
+        project = QgsProject.instance()
+        dist_calculator = QgsDistanceArea()
+        dist_calculator.setSourceCrs(project.crs(), project.transformContext())
+        dist_calculator.setEllipsoid(project.ellipsoid())
+        result = dist_calculator.convertLengthMeasurement(
+            self.__buffer_width, project.crs().mapUnits())
+        return result
+
     def cadCanvasReleaseEvent(self, event: Optional[QgsMapMouseEvent]) -> None:
         vlayer = self.currentVectorLayer()
 
@@ -80,26 +91,24 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         self.stopCapturing()
 
         line_geometry = QgsGeometry.fromWkt(line_wkt)
-        transform_1 = QgsCoordinateTransform(
+        transform = QgsCoordinateTransform(
             vlayer.crs(),
             self.canvas().mapSettings().destinationCrs(),
-            QgsProject.instance()
-        )
-        transform_2 = QgsCoordinateTransform(
-            self.canvas().mapSettings().destinationCrs(),
-            vlayer.crs(),
             QgsProject.instance()
         )
 
-        line_geometry.transform(transform_1)
+        lenght_buffer = self.convert_distance()
+
+        line_geometry.transform(transform)
         buffer_geometry = line_geometry.buffer(
-            distance=self.__buffer_width,
+            distance=lenght_buffer,
             segments=10,
             endCapStyle=self.__cap_style,
             joinStyle=self.__join_style,
             miterLimit=2
         )
-        buffer_geometry.transform(transform_2)
+
+        buffer_geometry.transform(transform, QgsCoordinateTransform.ReverseTransform)
 
         f = QgsFeature(vlayer.fields())
         f.setGeometry(buffer_geometry)
