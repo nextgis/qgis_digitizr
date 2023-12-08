@@ -48,69 +48,69 @@
 <context>
     <name>DigitizrPlugin</name>
     <message>
-        <location filename="../plugin.py" line="114"/>
+        <location filename="../plugin.py" line="127"/>
         <source>Add line buffer</source>
         <translation>Добавить линейный буфер</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="153"/>
+        <location filename="../plugin.py" line="165"/>
         <source>About plugin…</source>
         <translation>О плагине…</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="166"/>
+        <location filename="../plugin.py" line="178"/>
         <source>Buffer size (meters)</source>
         <translation>Размер буфера (в метрах)</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="210"/>
+        <location filename="../plugin.py" line="222"/>
         <source>Round</source>
         <translation>Скруглённые</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="187"/>
+        <location filename="../plugin.py" line="199"/>
         <source>Square</source>
         <translation>Квадратные</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="192"/>
+        <location filename="../plugin.py" line="204"/>
         <source>Flat</source>
         <translation>Плоские</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="215"/>
+        <location filename="../plugin.py" line="227"/>
         <source>Miter</source>
         <translation>Острые</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="220"/>
+        <location filename="../plugin.py" line="232"/>
         <source>Bevel</source>
         <translation>Скошенные</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="131"/>
+        <location filename="../plugin.py" line="143"/>
         <source>End cap style</source>
         <translation>Стиль торцов</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="138"/>
+        <location filename="../plugin.py" line="150"/>
         <source>Join style</source>
         <translation>Стиль соединения</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="178"/>
+        <location filename="../plugin.py" line="190"/>
         <source>The end cap style parameter controls how line endings are handled in the buffer</source>
         <translation>Параметр &quot;Стиль торцов&quot; управляет тем, как окончания линии обрабатываются в буфере</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="206"/>
+        <location filename="../plugin.py" line="218"/>
         <source>The join style parameter controls how segments joins are handled when offsetting corners in a line</source>
         <translation>Параметр &quot;Стиль соединения&quot; определяет, как обрабатываются соединения сегментов при смещении углов линии</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="96"/>
+        <location filename="../plugin.py" line="97"/>
         <source>{plugin_name} Toolbar</source>
-        <translation type="unfinished">Инструменты {plugin_name}</translation>
+        <translation>Инструменты {plugin_name}</translation>
     </message>
 </context>
 </TS>
