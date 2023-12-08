@@ -26,8 +26,8 @@
 &lt;ul&gt;&lt;li&gt;&lt;b&gt;Convenient up-to-date data extracts for any place in the world:
 &lt;a href=&quot;{main_url}/{utm}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;Fully featured Web GIS service:
-&lt;a href=&quot;{main_url}/nextgis-com/plans{utm}&quot;&gt;
-{main_url}/nextgis-com/plans&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;a href=&quot;{main_url}/pricing-base{utm}&quot;&gt;
+{main_url}/pricing-base&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
 &lt;/p&gt;</source>
         <translation>&lt;p&gt;{description}&lt;/p&gt;
 &lt;p&gt;{about}&lt;/p&gt;
@@ -40,8 +40,8 @@
 &lt;ul&gt;&lt;li&gt;&lt;b&gt;Удобная выборка актуальных данных из любой точки мира:
 &lt;a href=&quot;{main_url}/{utm}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;Полнофункциональный веб-ГИС-сервис:
-&lt;a href=&quot;{main_url}/nextgis-com/plans{utm}&quot;&gt;
-{main_url}/nextgis-com/plans&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;a href=&quot;{main_url}/pricing-base{utm}&quot;&gt;
+{main_url}/pricing-base&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
 &lt;/p&gt;</translation>
     </message>
 </context>
