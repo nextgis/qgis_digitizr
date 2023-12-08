@@ -116,7 +116,7 @@ class DigitizrPlugin:
 
         add_translator(path.join(
             self.plugin_dir, 'i18n',
-            'digitizr_{locale}.qm'
+            f'digitizr_{locale}.qm'
         ))
 
     def __init_tool(self, settings: DigitizrSettings) -> None:
@@ -275,7 +275,6 @@ class DigitizrPlugin:
     def __on_map_tool_set(self, new_tool: QgsMapTool) -> None:
         if new_tool != self.toolAddLineBuffer:
             self.__tool_action.setChecked(False)
-            self.__tool_action.setEnabled(True)
 
     def __open_about_dialog(self):
         dialog = about_dialog.AboutDialog(os.path.basename(self.plugin_dir))

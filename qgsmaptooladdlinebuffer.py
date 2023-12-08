@@ -61,14 +61,18 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
     def convert_distance(self):
         project = QgsProject.instance()
+        assert project is not None
         dist_calculator = QgsDistanceArea()
         dist_calculator.setSourceCrs(project.crs(), project.transformContext())
         dist_calculator.setEllipsoid(project.ellipsoid())
         result = dist_calculator.convertLengthMeasurement(
-            self.__buffer_width, project.crs().mapUnits())
+            self.__buffer_width, project.crs().mapUnits()
+        )
         return result
 
     def cadCanvasReleaseEvent(self, event: Optional[QgsMapMouseEvent]) -> None:
+        assert event is not None
+
         vlayer = self.currentVectorLayer()
 
         if vlayer is None:
@@ -78,12 +82,12 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             self.notifyNotEditableLayer()
             return
 
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.MouseButton.LeftButton:
             error = self.addVertex(event.mapPoint(), event.mapPointMatch())
             # TODO Process error
             self.startCapturing()
             return
-        elif event.button() != Qt.RightButton:
+        elif event.button() != Qt.MouseButton.RightButton:
             self.deleteTempRubberBand()
             return
 
@@ -108,14 +112,15 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             miterLimit=2
         )
 
-        buffer_geometry.transform(transform, QgsCoordinateTransform.ReverseTransform)
+        buffer_geometry.transform(
+            transform, QgsCoordinateTransform.ReverseTransform
+        )
 
         f = QgsFeature(vlayer.fields())
         f.setGeometry(buffer_geometry)
 
         vlayer.beginEditCommand("Add line buffer")
-        res = vlayer.addFeature(f)
-
+        vlayer.addFeature(f)
         vlayer.endEditCommand()
         self.canvas().refresh()
 
