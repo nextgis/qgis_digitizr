@@ -93,7 +93,8 @@ class DigitizrPlugin:
         self.toolAddLineBuffer.set_join_style(settings.join_style)
 
     def __init_toolbar(self, settings: DigitizrSettings):
-        title = f'{self.PLUGIN_NAME} Toolbar'
+        title = self.tr('{plugin_name} Toolbar') \
+            .format(plugin_name=self.PLUGIN_NAME)
         self.__toolbar = self._iface.addToolBar(title)
         assert self.__toolbar is not None
         self.__toolbar.setToolTip(title)
@@ -127,14 +128,14 @@ class DigitizrPlugin:
 
         vbox_layout = QVBoxLayout()
 
-        vbox_layout.addWidget(QLabel(self.tr('End Cap Style')))
+        vbox_layout.addWidget(QLabel(self.tr('End cap style')))
         self.__cap_combobox = self.__create_cap_combobox(settings)
         self.__cap_combobox.currentIndexChanged.connect(
             self.__on_cap_changed
         )
         vbox_layout.addWidget(self.__cap_combobox)
 
-        vbox_layout.addWidget(QLabel(self.tr('Join Style')))
+        vbox_layout.addWidget(QLabel(self.tr('Join style')))
         self.__join_combobox = self.__create_join_combobox(settings)
         self.__join_combobox.currentIndexChanged.connect(
             self.__on_join_changed
@@ -174,6 +175,10 @@ class DigitizrPlugin:
         assert self.__toolbar is not None
 
         combobox = QComboBox()
+        combobox.setToolTip(self.tr(
+            'The end cap style parameter controls how line endings are handled'
+            ' in the buffer'
+        ))
         combobox.addItem(
             QgsApplication.getThemeIcon("cap_round.svg"),
             self.tr('Round'),
@@ -198,6 +203,10 @@ class DigitizrPlugin:
         assert self.__toolbar is not None
 
         combobox = QComboBox()
+        combobox.setToolTip(self.tr(
+            'The join style parameter controls how segments joins are handled'
+            ' when offsetting corners in a line'
+        ))
         combobox.addItem(
             QgsApplication.getThemeIcon("join_round.svg"),
             self.tr('Round'),

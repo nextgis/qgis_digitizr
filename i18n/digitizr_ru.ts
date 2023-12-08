@@ -24,9 +24,9 @@
 &lt;p&gt;&lt;b&gt;Please report bugs at&lt;/b&gt; &lt;a href=&quot;{tracker_url}&quot;&gt;bugtracker&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Other helpful services by NextGIS:
 &lt;ul&gt;&lt;li&gt;&lt;b&gt;Convenient up-to-date data extracts for any place in the world:
-&lt;a href=&quot;{main_url}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
+&lt;a href=&quot;{main_url}/{utm}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;Fully featured Web GIS service:
-&lt;a href=&quot;{main_url}/nextgis-com/plans&quot;&gt;
+&lt;a href=&quot;{main_url}/nextgis-com/plans{utm}&quot;&gt;
 {main_url}/nextgis-com/plans&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
 &lt;/p&gt;</source>
         <translation>&lt;p&gt;{description}&lt;/p&gt;
@@ -38,9 +38,9 @@
 &lt;p&gt;&lt;b&gt;Пожалуйста, сообщайте о багах в&lt;/b&gt; &lt;a href=&quot;{tracker_url}&quot;&gt;багтрекер&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Другие полезные сервисы NextGIS:
 &lt;ul&gt;&lt;li&gt;&lt;b&gt;Удобная выборка актуальных данных из любой точки мира:
-&lt;a href=&quot;{main_url}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
+&lt;a href=&quot;{main_url}/{utm}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;Полнофункциональный веб-ГИС-сервис:
-&lt;a href=&quot;{main_url}/nextgis-com/plans&quot;&gt;
+&lt;a href=&quot;{main_url}/nextgis-com/plans{utm}&quot;&gt;
 {main_url}/nextgis-com/plans&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
 &lt;/p&gt;</translation>
     </message>
@@ -48,37 +48,69 @@
 <context>
     <name>DigitizrPlugin</name>
     <message>
-        <location filename="../plugin.py" line="61"/>
+        <location filename="../plugin.py" line="114"/>
         <source>Add line buffer</source>
-        <translation>Добавить строковый буфер</translation>
+        <translation>Добавить линейный буфер</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="69"/>
-        <source>Settings</source>
-        <translation>Настройки</translation>
+        <location filename="../plugin.py" line="153"/>
+        <source>About plugin…</source>
+        <translation>О плагине…</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="73"/>
-        <source>About</source>
-        <translation>О модуле...</translation>
+        <location filename="../plugin.py" line="166"/>
+        <source>Buffer size (meters)</source>
+        <translation>Размер буфера (в метрах)</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="115"/>
-        <source>Add line buffer settings</source>
-        <translation>Настройки добавления строкового буфера</translation>
+        <location filename="../plugin.py" line="210"/>
+        <source>Round</source>
+        <translation>Скруглённые</translation>
     </message>
     <message>
-        <location filename="../plugin.py" line="115"/>
-        <source>Buffer size (meters):</source>
-        <translation>Размер буфера (метры):</translation>
+        <location filename="../plugin.py" line="187"/>
+        <source>Square</source>
+        <translation>Квадратные</translation>
     </message>
-</context>
-<context>
-    <name>NGConnectPlugin</name>
     <message>
-        <location filename="../plugin.py" line="79"/>
-        <source>About</source>
-        <translation type="obsolete">О модуле...</translation>
+        <location filename="../plugin.py" line="192"/>
+        <source>Flat</source>
+        <translation>Плоские</translation>
+    </message>
+    <message>
+        <location filename="../plugin.py" line="215"/>
+        <source>Miter</source>
+        <translation>Острые</translation>
+    </message>
+    <message>
+        <location filename="../plugin.py" line="220"/>
+        <source>Bevel</source>
+        <translation>Скошенные</translation>
+    </message>
+    <message>
+        <location filename="../plugin.py" line="131"/>
+        <source>End cap style</source>
+        <translation>Стиль торцов</translation>
+    </message>
+    <message>
+        <location filename="../plugin.py" line="138"/>
+        <source>Join style</source>
+        <translation>Стиль соединения</translation>
+    </message>
+    <message>
+        <location filename="../plugin.py" line="178"/>
+        <source>The end cap style parameter controls how line endings are handled in the buffer</source>
+        <translation>Параметр &quot;Стиль торцов&quot; управляет тем, как окончания линии обрабатываются в буфере</translation>
+    </message>
+    <message>
+        <location filename="../plugin.py" line="206"/>
+        <source>The join style parameter controls how segments joins are handled when offsetting corners in a line</source>
+        <translation>Параметр &quot;Стиль соединения&quot; определяет, как обрабатываются соединения сегментов при смещении углов линии</translation>
+    </message>
+    <message>
+        <location filename="../plugin.py" line="96"/>
+        <source>{plugin_name} Toolbar</source>
+        <translation type="unfinished">Инструменты {plugin_name}</translation>
     </message>
 </context>
 </TS>
