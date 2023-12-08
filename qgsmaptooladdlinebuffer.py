@@ -20,7 +20,7 @@ iface = cast(QgisInterface, iface)
 class QgsMapToolAddLineBuffer(QgsMapToolCapture):
     availabilityChanged = pyqtSignal(bool)
 
-    __buffer_width: float
+    __buffer_size: float
     __cap_style: Qgis.EndCapStyle
     __join_style: Qgis.JoinStyle
 
@@ -33,7 +33,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             canvas, cadDockWidget, QgsMapToolCapture.CaptureMode.CaptureLine
         )
 
-        self.__buffer_width = 10.0
+        self.__buffer_size = 10.0
         self.__cap_style = Qgis.EndCapStyle.Round
         self.__join_style = Qgis.JoinStyle.Round
 
@@ -50,8 +50,8 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             type=Qt.ConnectionType.QueuedConnection  # type: ignore
         )
 
-    def set_buffer_width(self, width: float) -> None:
-        self.__buffer_width = width
+    def set_buffer_size(self, size: float) -> None:
+        self.__buffer_size = size
 
     def set_cap_style(self, cap_style: Qgis.EndCapStyle) -> None:
         self.__cap_style = cap_style
@@ -66,7 +66,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         dist_calculator.setSourceCrs(project.crs(), project.transformContext())
         dist_calculator.setEllipsoid(project.ellipsoid())
         result = dist_calculator.convertLengthMeasurement(
-            self.__buffer_width, project.crs().mapUnits()
+            self.__buffer_size, project.crs().mapUnits()
         )
         return result
 

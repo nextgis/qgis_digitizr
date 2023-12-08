@@ -24,7 +24,7 @@ class DigitizrPlugin:
     PLUGIN_NAME = 'Digitizr'
     __translator: Optional[QTranslator]
     __toolbar: Optional[QToolBar]
-    __tool_action: Optional[QAction]
+    __tool_button: Optional[QToolButton]
     __about_action: Optional[QAction]
     __cap_combobox: Optional[QComboBox]
     __join_combobox: Optional[QComboBox]
@@ -35,7 +35,7 @@ class DigitizrPlugin:
 
         self.__translator = None
         self.__toolbar = None
-        self.__tool_action = None
+        self.__tool_button = None
         self.__about_action = None
         self.__cap_combobox = None
         self.__join_combobox = None
@@ -49,58 +49,23 @@ class DigitizrPlugin:
         settings = DigitizrSettings()
 
         self.__init_tool(settings)
-        self.__init_menu()
         self.__init_toolbar(settings)
 
-        self._iface.mapCanvas().mapToolSet.connect(self.__on_map_tool_set)
+        canvas = self._iface.mapCanvas()
+        assert canvas is not None
+        canvas.mapToolSet.connect(self.__on_map_tool_set)
 
         self.toolAddLineBuffer.checkAvailability()
 
     def unload(self):
         self.__unload_toolbar()
-        self.__unload_menu()
 
     def activateToolAddLineBuffer(self, status):
-        self.__tool_action.setChecked(True)
-        self._iface.mapCanvas().setMapTool(self.toolAddLineBuffer)
-
-    def __init_menu(self):
-        root_dir = os.path.dirname(__file__)
-        icons_dir = os.path.join(root_dir, "icons")
-
-        self.__tool_action = QAction(
-            QIcon(os.path.join(icons_dir, "line_buffer.svg")),
-            self.tr("Add line buffer"),
-            self._iface.mainWindow()
-        )
-        self.__tool_action.setCheckable(True)
-        self.__tool_action.setEnabled(self.toolAddLineBuffer.isAvalable())
-        self.__tool_action.triggered.connect(self.activateToolAddLineBuffer)
-        self._iface.addPluginToVectorMenu(self.PLUGIN_NAME, self.__tool_action)
-
-        self.__about_action = QAction(
-            self.tr("About…"), self._iface.mainWindow()
-        )
-        self.__about_action.triggered.connect(self.__open_about_dialog)
-        self._iface.addPluginToVectorMenu(
-            self.PLUGIN_NAME, self.__about_action
-        )
-
-    def __unload_menu(self) -> None:
-        assert self.__tool_action is not None
-        assert self.__about_action is not None
-
-        self._iface.removePluginVectorMenu(
-            self.PLUGIN_NAME, self.__tool_action
-        )
-        self.__tool_action.deleteLater()
-        self.__tool_action = None
-
-        self._iface.removePluginVectorMenu(
-            self.PLUGIN_NAME, self.__about_action
-        )
-        self.__about_action.deleteLater()
-        self.__about_action = None
+        assert self.__tool_button is not None
+        self.__tool_button.setChecked(True)
+        canvas = self._iface.mapCanvas()
+        assert canvas is not None
+        canvas.setMapTool(self.toolAddLineBuffer)
 
     def __init_translator(self):
         # initialize locale
@@ -123,7 +88,7 @@ class DigitizrPlugin:
         self.toolAddLineBuffer = QgsMapToolAddLineBuffer(
             self._iface.mapCanvas(), self._iface.cadDockWidget()
         )
-        self.toolAddLineBuffer.set_buffer_width(settings.buffer_size)
+        self.toolAddLineBuffer.set_buffer_size(settings.buffer_size)
         self.toolAddLineBuffer.set_cap_style(settings.end_cap_style)
         self.toolAddLineBuffer.set_join_style(settings.join_style)
 
@@ -139,19 +104,26 @@ class DigitizrPlugin:
 
     def __init_tool_button(self, settings: DigitizrSettings) -> None:
         assert self.__toolbar is not None
-        assert self.__tool_action is not None
+
+        root_dir = os.path.dirname(__file__)
+        icons_dir = os.path.join(root_dir, "icons")
 
         tool_button = QToolButton(self.__toolbar)
+        tool_button.setIcon(QIcon(os.path.join(icons_dir, "line_buffer.svg")))
+        tool_button.setToolTip(self.tr("Add line buffer"))
+        tool_button.setCheckable(True)
         tool_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
         tool_button.setPopupMode(
             QToolButton.ToolButtonPopupMode.MenuButtonPopup
         )
-        tool_button.setDefaultAction(self.__tool_action)
-        self.__tool_action.toggled.connect(tool_button.setChecked)
-        self.__toolbar.addWidget(tool_button)
+        tool_button.toggled.connect(self.activateToolAddLineBuffer)
+        tool_button.setEnabled(self.toolAddLineBuffer.isAvalable())
         self.toolAddLineBuffer.availabilityChanged.connect(
             tool_button.setEnabled
         )
+        self.__tool_button = tool_button
+
+        self.__toolbar.addWidget(tool_button)
 
         vbox_layout = QVBoxLayout()
 
@@ -176,21 +148,27 @@ class DigitizrPlugin:
         widget_action = QWidgetAction(digitizr_menu)
         widget_action.setDefaultWidget(tool_settings_widget)
         digitizr_menu.addAction(widget_action)
+        digitizr_menu.addSeparator()
+        self.__about_action = QAction(
+            self.tr("About plugin…"), self._iface.mainWindow()
+        )
+        self.__about_action.triggered.connect(self.__open_about_dialog)
+        digitizr_menu.addAction(self.__about_action)
         tool_button.setMenu(digitizr_menu)
 
     def __init_size_spin_box(self, settings: DigitizrSettings) -> None:
         assert self.__toolbar is not None
-        width_spinbox = QgsDoubleSpinBox()
-        width_spinbox.setDecimals(2)
-        width_spinbox.setMaximum(99999999.99)
-        width_spinbox.setValue(settings.buffer_size)
-        width_spinbox.setToolTip(self.tr('Buffer size (meters)'))
-        width_spinbox.valueChanged.connect(self.__on_width_changed)
-        width_spinbox.setEnabled(self.toolAddLineBuffer.isAvalable())
+        size_spinbox = QgsDoubleSpinBox()
+        size_spinbox.setDecimals(2)
+        size_spinbox.setMaximum(99999999.99)
+        size_spinbox.setValue(settings.buffer_size)
+        size_spinbox.setToolTip(self.tr('Buffer size (meters)'))
+        size_spinbox.valueChanged.connect(self.__on_width_changed)
+        size_spinbox.setEnabled(self.toolAddLineBuffer.isAvalable())
         self.toolAddLineBuffer.availabilityChanged.connect(
-            width_spinbox.setEnabled
+            size_spinbox.setEnabled
         )
-        self.__toolbar.addWidget(width_spinbox)
+        self.__toolbar.addWidget(size_spinbox)
 
     def __create_cap_combobox(self, settings: DigitizrSettings) -> QComboBox:
         assert self.__toolbar is not None
@@ -249,7 +227,7 @@ class DigitizrPlugin:
         self.__toolbar = None
 
     def __on_width_changed(self, value: float) -> None:
-        self.toolAddLineBuffer.set_buffer_width(value)
+        self.toolAddLineBuffer.set_buffer_size(value)
 
         settings = DigitizrSettings()
         settings.buffer_size = value
@@ -272,9 +250,11 @@ class DigitizrPlugin:
         settings = DigitizrSettings()
         settings.join_style = join_style
 
-    def __on_map_tool_set(self, new_tool: QgsMapTool) -> None:
-        if new_tool != self.toolAddLineBuffer:
-            self.__tool_action.setChecked(False)
+    def __on_map_tool_set(
+        self, new_tool: QgsMapTool, old_tool: QgsMapTool
+    ) -> None:
+        assert self.__tool_button is not None
+        self.__tool_button.setChecked(new_tool == self.toolAddLineBuffer)
 
     def __open_about_dialog(self):
         dialog = about_dialog.AboutDialog(os.path.basename(self.plugin_dir))
