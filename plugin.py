@@ -116,7 +116,7 @@ class DigitizrPlugin:
 
         add_translator(path.join(
             self.plugin_dir, 'i18n',
-            'digitizr_{}.qm'.format(locale)
+            f'digitizr_{locale}.qm'
         ))
 
     def __init_tool(self, settings: DigitizrSettings) -> None:
