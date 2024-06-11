@@ -4,12 +4,22 @@ from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QAction
 
 from qgis.core import (
-    QgsGeometry, QgsCoordinateTransform, QgsFeature, QgsWkbTypes, QgsProject,
-    QgsVectorDataProvider, Qgis, QgsVectorLayer, QgsDistanceArea
+    QgsGeometry,
+    QgsCoordinateTransform,
+    QgsFeature,
+    QgsWkbTypes,
+    QgsProject,
+    QgsVectorDataProvider,
+    Qgis,
+    QgsVectorLayer,
+    QgsDistanceArea,
 )
 from qgis.gui import (
-    QgsMapToolCapture, QgsMapCanvas, QgsAdvancedDigitizingDockWidget,
-    QgsMapMouseEvent, QgisInterface
+    QgsMapToolCapture,
+    QgsMapCanvas,
+    QgsAdvancedDigitizingDockWidget,
+    QgsMapMouseEvent,
+    QgisInterface,
 )
 from qgis.utils import iface
 
@@ -27,7 +37,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
     def __init__(
         self,
         canvas: QgsMapCanvas,
-        cadDockWidget: QgsAdvancedDigitizingDockWidget
+        cadDockWidget: QgsAdvancedDigitizingDockWidget,
     ) -> None:
         super().__init__(
             canvas, cadDockWidget, QgsMapToolCapture.CaptureMode.CaptureLine
@@ -42,12 +52,12 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         main_window = iface.mainWindow()
         assert main_window is not None
         add_feature_action = main_window.findChild(
-            QAction, 'mActionToggleEditing'
+            QAction, "mActionToggleEditing"
         )
         assert add_feature_action is not None
         add_feature_action.toggled.connect(
             self.checkAvailability,
-            type=Qt.ConnectionType.QueuedConnection  # type: ignore
+            type=Qt.ConnectionType.QueuedConnection,  # type: ignore
         )
 
     def set_buffer_size(self, size: float) -> None:
@@ -98,7 +108,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         transform = QgsCoordinateTransform(
             vlayer.crs(),
             self.canvas().mapSettings().destinationCrs(),
-            QgsProject.instance()
+            QgsProject.instance(),
         )
 
         lenght_buffer = self.convert_distance()
@@ -109,7 +119,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             segments=10,
             endCapStyle=self.__cap_style,
             joinStyle=self.__join_style,
-            miterLimit=2
+            miterLimit=2,
         )
 
         buffer_geometry.transform(
