@@ -1,28 +1,26 @@
 from typing import Optional, cast
 
-from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtWidgets import QAction
-
 from qgis.core import (
-    QgsGeometry,
+    Qgis,
     QgsCoordinateTransform,
+    QgsDistanceArea,
     QgsFeature,
-    QgsWkbTypes,
+    QgsGeometry,
     QgsProject,
     QgsVectorDataProvider,
-    Qgis,
     QgsVectorLayer,
-    QgsDistanceArea,
+    QgsWkbTypes,
 )
 from qgis.gui import (
-    QgsMapToolCapture,
-    QgsMapCanvas,
-    QgsAdvancedDigitizingDockWidget,
-    QgsMapMouseEvent,
     QgisInterface,
+    QgsAdvancedDigitizingDockWidget,
+    QgsMapCanvas,
+    QgsMapMouseEvent,
+    QgsMapToolCapture,
 )
+from qgis.PyQt.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface
-
 
 iface = cast(QgisInterface, iface)
 
@@ -93,7 +91,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             return
 
         if event.button() == Qt.MouseButton.LeftButton:
-            error = self.addVertex(event.mapPoint(), event.mapPointMatch())
+            self.addVertex(event.mapPoint(), event.mapPointMatch())
             # TODO Process error
             self.startCapturing()
             return
