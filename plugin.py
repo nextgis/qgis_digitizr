@@ -5,8 +5,15 @@ from os import path
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
-    QAction, QMenu, QWidgetAction, QWidget, QVBoxLayout, QToolButton, QToolBar,
-    QLabel, QComboBox
+    QAction,
+    QMenu,
+    QWidgetAction,
+    QWidget,
+    QVBoxLayout,
+    QToolButton,
+    QToolBar,
+    QLabel,
+    QComboBox,
 )
 from .qgsmaptooladdlinebuffer import QgsMapToolAddLineBuffer
 
@@ -21,7 +28,7 @@ from . import about_dialog
 class DigitizrPlugin:
     """QGIS Plugin Implementation."""
 
-    PLUGIN_NAME = 'Digitizr'
+    PLUGIN_NAME = "Digitizr"
     __translator: Optional[QTranslator]
     __toolbar: Optional[QToolBar]
     __tool_action: Optional[QAction]
@@ -80,10 +87,9 @@ class DigitizrPlugin:
             QCoreApplication.installTranslator(translator)
             self.__translator = translator  # Should be kept in memory
 
-        add_translator(path.join(
-            self.plugin_dir, 'i18n',
-            f'digitizr_{locale}.qm'
-        ))
+        add_translator(
+            path.join(self.plugin_dir, "i18n", f"digitizr_{locale}.qm")
+        )
 
     def __init_tool(self, settings: DigitizrSettings) -> None:
         self.toolAddLineBuffer = QgsMapToolAddLineBuffer(
@@ -94,12 +100,13 @@ class DigitizrPlugin:
         self.toolAddLineBuffer.set_join_style(settings.join_style)
 
     def __init_toolbar(self, settings: DigitizrSettings):
-        title = self.tr('{plugin_name} Toolbar') \
-            .format(plugin_name=self.PLUGIN_NAME)
+        title = self.tr("{plugin_name} Toolbar").format(
+            plugin_name=self.PLUGIN_NAME
+        )
         self.__toolbar = self._iface.addToolBar(title)
         assert self.__toolbar is not None
         self.__toolbar.setToolTip(title)
-        self.__toolbar.setObjectName('NGDigitizrToolBar')
+        self.__toolbar.setObjectName("NGDigitizrToolBar")
 
         self.__init_tool_button(settings)
         self.__init_size_spin_box(settings)
@@ -127,7 +134,7 @@ class DigitizrPlugin:
         self.__tool_action = QAction(
             QIcon(os.path.join(ICONS_DIR, "line_buffer.svg")),
             self.tr("Add line buffer"),
-            tool_button
+            tool_button,
         )
         self.__tool_action.setCheckable(True)
         self.__tool_action.triggered.connect(self.activateToolAddLineBuffer)
@@ -140,14 +147,12 @@ class DigitizrPlugin:
 
         vbox_layout = QVBoxLayout()
 
-        vbox_layout.addWidget(QLabel(self.tr('End cap style')))
+        vbox_layout.addWidget(QLabel(self.tr("End cap style")))
         self.__cap_combobox = self.__create_cap_combobox(settings)
-        self.__cap_combobox.currentIndexChanged.connect(
-            self.__on_cap_changed
-        )
+        self.__cap_combobox.currentIndexChanged.connect(self.__on_cap_changed)
         vbox_layout.addWidget(self.__cap_combobox)
 
-        vbox_layout.addWidget(QLabel(self.tr('Join style')))
+        vbox_layout.addWidget(QLabel(self.tr("Join style")))
         self.__join_combobox = self.__create_join_combobox(settings)
         self.__join_combobox.currentIndexChanged.connect(
             self.__on_join_changed
@@ -175,7 +180,7 @@ class DigitizrPlugin:
         size_spinbox.setDecimals(2)
         size_spinbox.setMaximum(99999999.99)
         size_spinbox.setValue(settings.buffer_size)
-        size_spinbox.setToolTip(self.tr('Buffer size (meters)'))
+        size_spinbox.setToolTip(self.tr("Buffer size (meters)"))
         size_spinbox.valueChanged.connect(self.__on_width_changed)
         size_spinbox.setEnabled(self.toolAddLineBuffer.isAvalable())
         self.toolAddLineBuffer.availabilityChanged.connect(
@@ -187,24 +192,26 @@ class DigitizrPlugin:
         assert self.__toolbar is not None
 
         combobox = QComboBox()
-        combobox.setToolTip(self.tr(
-            'The end cap style parameter controls how line endings are handled'
-            ' in the buffer'
-        ))
+        combobox.setToolTip(
+            self.tr(
+                "The end cap style parameter controls how line endings are handled"
+                " in the buffer"
+            )
+        )
         combobox.addItem(
             QgsApplication.getThemeIcon("cap_round.svg"),
-            self.tr('Round'),
-            Qgis.EndCapStyle.Round
+            self.tr("Round"),
+            Qgis.EndCapStyle.Round,
         )
         combobox.addItem(
             QgsApplication.getThemeIcon("cap_square.svg"),
-            self.tr('Square'),
-            Qgis.EndCapStyle.Square
+            self.tr("Square"),
+            Qgis.EndCapStyle.Square,
         )
         combobox.addItem(
             QgsApplication.getThemeIcon("cap_flat.svg"),
-            self.tr('Flat'),
-            Qgis.EndCapStyle.Flat
+            self.tr("Flat"),
+            Qgis.EndCapStyle.Flat,
         )
 
         combobox.setCurrentIndex(combobox.findData(settings.end_cap_style))
@@ -215,24 +222,26 @@ class DigitizrPlugin:
         assert self.__toolbar is not None
 
         combobox = QComboBox()
-        combobox.setToolTip(self.tr(
-            'The join style parameter controls how segments joins are handled'
-            ' when offsetting corners in a line'
-        ))
+        combobox.setToolTip(
+            self.tr(
+                "The join style parameter controls how segments joins are handled"
+                " when offsetting corners in a line"
+            )
+        )
         combobox.addItem(
             QgsApplication.getThemeIcon("join_round.svg"),
-            self.tr('Round'),
-            Qgis.JoinStyle.Round
+            self.tr("Round"),
+            Qgis.JoinStyle.Round,
         )
         combobox.addItem(
             QgsApplication.getThemeIcon("join_miter.svg"),
-            self.tr('Miter'),
-            Qgis.JoinStyle.Miter
+            self.tr("Miter"),
+            Qgis.JoinStyle.Miter,
         )
         combobox.addItem(
             QgsApplication.getThemeIcon("join_bevel.svg"),
-            self.tr('Bevel'),
-            Qgis.JoinStyle.Bevel
+            self.tr("Bevel"),
+            Qgis.JoinStyle.Bevel,
         )
 
         combobox.setCurrentIndex(combobox.findData(settings.join_style))
