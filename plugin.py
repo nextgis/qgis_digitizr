@@ -1,28 +1,26 @@
 import os
+from os import path
 from typing import Optional
 
-from os import path
-from qgis.PyQt.QtCore import Qt
+from qgis.core import Qgis, QgsApplication
+from qgis.gui import QgisInterface, QgsDoubleSpinBox, QgsMapTool
+from qgis.PyQt.QtCore import QCoreApplication, Qt, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
-    QMenu,
-    QWidgetAction,
-    QWidget,
-    QVBoxLayout,
-    QToolButton,
-    QToolBar,
-    QLabel,
     QComboBox,
+    QLabel,
+    QMenu,
+    QToolBar,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
+    QWidgetAction,
 )
-from .qgsmaptooladdlinebuffer import QgsMapToolAddLineBuffer
 
-from qgis.core import QgsApplication, Qgis
-from qgis.gui import QgisInterface, QgsDoubleSpinBox, QgsMapTool
-from qgis.PyQt.QtCore import QTranslator, QCoreApplication
-
-from .settings import DigitizrSettings
 from . import about_dialog
+from .qgsmaptooladdlinebuffer import QgsMapToolAddLineBuffer
+from .settings import DigitizrSettings
 
 
 class DigitizrPlugin:
