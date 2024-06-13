@@ -10,7 +10,7 @@ QGIS plugins page: https://plugins.qgis.org/plugins/copy_coords/
 
 ## YouTube
 
-[![rZ__hHaf29M](https://github.com/nextgis/qgis_digitizr/assets/101568545/e70d08ba-9925-48ec-b62a-75b78bc28144)](https://youtu.be/rZ__hHaf29M)
+[![VazQzb4IHQ0](https://github.com/nextgis/qgis_digitizr/assets/14816075/307532e0-1ce9-47a1-adac-040ae4b1b378)](https://youtu.be/VazQzb4IHQ0)
 
 ## License
 
