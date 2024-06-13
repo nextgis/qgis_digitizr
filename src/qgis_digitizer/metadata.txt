@@ -29,8 +29,8 @@ tags=nextgis, digitize, tool, buffer
 homepage=https://github.com/nextgis/qgis_digitizr
 tracker=https://github.com/nextgis/qgis_digitizr/issues
 repository=https://github.com/nextgis/qgis_digitizr
-video=https://youtu.be/rZ__hHaf29M
-video[ru]=https://youtu.be/jRQ6BOvpSBI
+video=https://youtu.be/VazQzb4IHQ0
+video[ru]=https://youtu.be/ZdmutlYZhl8
 #icon=icons/plugin.png
 
 # experimental flag
