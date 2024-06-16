@@ -6,6 +6,7 @@ from qgis.core import (
     QgsDistanceArea,
     QgsFeature,
     QgsGeometry,
+    QgsPointXY,
     QgsProject,
     QgsVectorDataProvider,
     QgsVectorLayer,
@@ -17,8 +18,10 @@ from qgis.gui import (
     QgsMapCanvas,
     QgsMapMouseEvent,
     QgsMapToolCapture,
+    QgsRubberBand,
 )
 from qgis.PyQt.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface
 
@@ -58,6 +61,13 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             type=Qt.ConnectionType.QueuedConnection,  # type: ignore
         )
 
+        self.rb = QgsRubberBand(self.canvas(), QgsWkbTypes.PolygonGeometry)
+        self.rb.setFillColor(QColor().fromRgb(255, 0, 0, 50))
+        self.rb.setStrokeColor(Qt.red)
+        self.rb.setWidth(1)
+
+        self.verticesList = []
+
     def set_buffer_size(self, size: float) -> None:
         self.__buffer_size = size
 
@@ -94,6 +104,17 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             self.addVertex(event.mapPoint(), event.mapPointMatch())
             # TODO Process error
             self.startCapturing()
+            self.point = self.toMapCoordinates(event.pos())
+            self.verticesList.append(self.point)
+            geom = QgsGeometry.fromPolygonXY(
+                [
+                    [
+                        QgsPointXY(vert.x(), vert.y())
+                        for vert in self.verticesList
+                    ]
+                ]
+            )
+            self.rb.setToGeometry(geom, vlayer)
             return
         elif event.button() != Qt.MouseButton.RightButton:
             self.deleteTempRubberBand()
@@ -101,6 +122,8 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
         line_wkt = self.captureCurve().curveToLine().asWkt()
         self.stopCapturing()
+        self.rb.reset()
+        self.verticesList.clear()
 
         line_geometry = QgsGeometry.fromWkt(line_wkt)
         transform = QgsCoordinateTransform(
