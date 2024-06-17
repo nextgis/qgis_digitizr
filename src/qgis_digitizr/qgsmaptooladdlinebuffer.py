@@ -6,7 +6,6 @@ from qgis.core import (
     QgsDistanceArea,
     QgsFeature,
     QgsGeometry,
-    QgsPointXY,
     QgsProject,
     QgsVectorDataProvider,
     QgsVectorLayer,
@@ -21,7 +20,6 @@ from qgis.gui import (
     QgsRubberBand,
 )
 from qgis.PyQt.QtCore import Qt, pyqtSignal
-from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface
 
@@ -62,11 +60,11 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         )
 
         self.rb = QgsRubberBand(self.canvas(), QgsWkbTypes.PolygonGeometry)
-        self.rb.setFillColor(QColor().fromRgb(255, 0, 0, 50))
-        self.rb.setStrokeColor(Qt.red)
-        self.rb.setWidth(1)
+        self.rb.setFillColor(self.digitizingFillColor())
+        self.rb.setStrokeColor(self.digitizingStrokeColor())
+        self.rb.setWidth(self.digitizingStrokeWidth())
 
-        self.verticesList = []
+        self.feat_temp = QgsFeature()
 
     def set_buffer_size(self, size: float) -> None:
         self.__buffer_size = size
@@ -88,6 +86,25 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         )
         return result
 
+    def cadCanvasMoveEvent(self, event: Optional[QgsMapMouseEvent]) -> None:
+        assert event is not None
+
+        vlayer = self.currentVectorLayer()
+
+        temp_line_wkt = self.captureCurve().curveToLine().asWkt()
+        temp_line_geometry = QgsGeometry.fromWkt(temp_line_wkt)
+        temp_length_buffer = self.convert_distance()
+        temp_buffer_geometry = temp_line_geometry.buffer(
+            distance=temp_length_buffer,
+            segments=10,
+            endCapStyle=self.__cap_style,
+            joinStyle=self.__join_style,
+            miterLimit=2,
+        )
+        self.feat_temp.setGeometry(temp_buffer_geometry)
+        self.rb.setToGeometry(self.feat_temp.geometry(), vlayer)
+        super().cadCanvasMoveEvent(event)
+
     def cadCanvasReleaseEvent(self, event: Optional[QgsMapMouseEvent]) -> None:
         assert event is not None
 
@@ -104,17 +121,18 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             self.addVertex(event.mapPoint(), event.mapPointMatch())
             # TODO Process error
             self.startCapturing()
-            self.point = self.toMapCoordinates(event.pos())
-            self.verticesList.append(self.point)
-            geom = QgsGeometry.fromPolygonXY(
-                [
-                    [
-                        QgsPointXY(vert.x(), vert.y())
-                        for vert in self.verticesList
-                    ]
-                ]
+            temp_line_wkt = self.captureCurve().curveToLine().asWkt()
+            temp_line_geometry = QgsGeometry.fromWkt(temp_line_wkt)
+            temp_length_buffer = self.convert_distance()
+            temp_buffer_geometry = temp_line_geometry.buffer(
+                distance=temp_length_buffer,
+                segments=10,
+                endCapStyle=self.__cap_style,
+                joinStyle=self.__join_style,
+                miterLimit=2,
             )
-            self.rb.setToGeometry(geom, vlayer)
+            self.feat_temp.setGeometry(temp_buffer_geometry)
+            self.rb.setToGeometry(self.feat_temp.geometry(), vlayer)
             return
         elif event.button() != Qt.MouseButton.RightButton:
             self.deleteTempRubberBand()
@@ -123,7 +141,6 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         line_wkt = self.captureCurve().curveToLine().asWkt()
         self.stopCapturing()
         self.rb.reset()
-        self.verticesList.clear()
 
         line_geometry = QgsGeometry.fromWkt(line_wkt)
         transform = QgsCoordinateTransform(
