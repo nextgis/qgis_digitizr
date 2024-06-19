@@ -70,12 +70,15 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
     def set_buffer_size(self, size: float) -> None:
         self.__buffer_size = size
+        self.repaintingRubberBand()
 
     def set_cap_style(self, cap_style: Qgis.EndCapStyle) -> None:
         self.__cap_style = cap_style
+        self.repaintingRubberBand()
 
     def set_join_style(self, join_style: Qgis.JoinStyle) -> None:
         self.__join_style = join_style
+        self.repaintingRubberBand()
 
     def convert_distance(self):
         project = QgsProject.instance()
@@ -185,6 +188,12 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         )
 
         return buffer_geometry
+
+    def repaintingRubberBand(self):
+        vlayer = self.currentVectorLayer()
+
+        self.__rb_geometry = self.createBuffer()
+        self.__rubber_band.setToGeometry(self.__rb_geometry, vlayer)
 
     def __is_layer_suitable(self, layer: QgsVectorLayer) -> bool:
         PolygonGeometry = QgsWkbTypes.GeometryType.PolygonGeometry
