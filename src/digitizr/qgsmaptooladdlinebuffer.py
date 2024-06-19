@@ -46,6 +46,15 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         self.__cap_style = Qgis.EndCapStyle.Round
         self.__join_style = Qgis.JoinStyle.Round
 
+        self.__rubber_band = QgsRubberBand(
+            self.canvas(), QgsWkbTypes.PolygonGeometry
+        )
+        self.__rubber_band.setFillColor(self.digitizingFillColor())
+        self.__rubber_band.setStrokeColor(self.digitizingStrokeColor())
+        self.__rubber_band.setWidth(self.digitizingStrokeWidth())
+
+        self.__rb_geometry = QgsGeometry()
+
         canvas.currentLayerChanged.connect(self.checkAvailability)
 
         main_window = iface.mainWindow()
@@ -58,13 +67,6 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             self.checkAvailability,
             type=Qt.ConnectionType.QueuedConnection,  # type: ignore
         )
-
-        self.rb = QgsRubberBand(self.canvas(), QgsWkbTypes.PolygonGeometry)
-        self.rb.setFillColor(self.digitizingFillColor())
-        self.rb.setStrokeColor(self.digitizingStrokeColor())
-        self.rb.setWidth(self.digitizingStrokeWidth())
-
-        self.feat_temp = QgsFeature()
 
     def set_buffer_size(self, size: float) -> None:
         self.__buffer_size = size
@@ -86,24 +88,24 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         )
         return result
 
-    def cadCanvasMoveEvent(self, event: Optional[QgsMapMouseEvent]) -> None:
-        assert event is not None
+    # def cadCanvasMoveEvent(self, event: QgsMapMouseEvent) -> None:
+    #     assert event is not None
 
-        vlayer = self.currentVectorLayer()
+    #     vlayer = self.currentVectorLayer()
 
-        temp_line_wkt = self.captureCurve().curveToLine().asWkt()
-        temp_line_geometry = QgsGeometry.fromWkt(temp_line_wkt)
-        temp_length_buffer = self.convert_distance()
-        temp_buffer_geometry = temp_line_geometry.buffer(
-            distance=temp_length_buffer,
-            segments=10,
-            endCapStyle=self.__cap_style,
-            joinStyle=self.__join_style,
-            miterLimit=2,
-        )
-        self.feat_temp.setGeometry(temp_buffer_geometry)
-        self.rb.setToGeometry(self.feat_temp.geometry(), vlayer)
-        super().cadCanvasMoveEvent(event)
+    #     temp_line_wkt = self.captureCurve().curveToLine().asWkt()
+    #     temp_line_geometry = QgsGeometry.fromWkt(temp_line_wkt)
+    #     temp_length_buffer = self.convert_distance()
+    #     temp_buffer_geometry = temp_line_geometry.buffer(
+    #         distance=temp_length_buffer,
+    #         segments=10,
+    #         endCapStyle=self.__cap_style,
+    #         joinStyle=self.__join_style,
+    #         miterLimit=2,
+    #     )
+    #     self.feat_temp.setGeometry(temp_buffer_geometry)
+    #     self.rb.setToGeometry(self.feat_temp.geometry(), vlayer)
+    #     super().cadCanvasMoveEvent(event)
 
     def cadCanvasReleaseEvent(self, event: Optional[QgsMapMouseEvent]) -> None:
         assert event is not None
@@ -121,48 +123,16 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             self.addVertex(event.mapPoint(), event.mapPointMatch())
             # TODO Process error
             self.startCapturing()
-            temp_line_wkt = self.captureCurve().curveToLine().asWkt()
-            temp_line_geometry = QgsGeometry.fromWkt(temp_line_wkt)
-            temp_length_buffer = self.convert_distance()
-            temp_buffer_geometry = temp_line_geometry.buffer(
-                distance=temp_length_buffer,
-                segments=10,
-                endCapStyle=self.__cap_style,
-                joinStyle=self.__join_style,
-                miterLimit=2,
-            )
-            self.feat_temp.setGeometry(temp_buffer_geometry)
-            self.rb.setToGeometry(self.feat_temp.geometry(), vlayer)
+            self.__rb_geometry = self.createBuffer()
+            self.__rubber_band.setToGeometry(self.__rb_geometry, vlayer)
             return
         elif event.button() != Qt.MouseButton.RightButton:
             self.deleteTempRubberBand()
             return
 
-        line_wkt = self.captureCurve().curveToLine().asWkt()
+        buffer_geometry = QgsGeometry(self.createBuffer())
         self.stopCapturing()
-        self.rb.reset()
-
-        line_geometry = QgsGeometry.fromWkt(line_wkt)
-        transform = QgsCoordinateTransform(
-            vlayer.crs(),
-            self.canvas().mapSettings().destinationCrs(),
-            QgsProject.instance(),
-        )
-
-        lenght_buffer = self.convert_distance()
-
-        line_geometry.transform(transform)
-        buffer_geometry = line_geometry.buffer(
-            distance=lenght_buffer,
-            segments=10,
-            endCapStyle=self.__cap_style,
-            joinStyle=self.__join_style,
-            miterLimit=2,
-        )
-
-        buffer_geometry.transform(
-            transform, QgsCoordinateTransform.ReverseTransform
-        )
+        self.__rubber_band.reset()
 
         f = QgsFeature(vlayer.fields())
         f.setGeometry(buffer_geometry)
@@ -188,6 +158,33 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             return False
 
         return True
+
+    def createBuffer(self):
+        vlayer = self.currentVectorLayer()
+
+        line_geometry = QgsGeometry(self.captureCurve().curveToLine())
+        transform = QgsCoordinateTransform(
+            vlayer.crs(),
+            self.canvas().mapSettings().destinationCrs(),
+            QgsProject.instance(),
+        )
+
+        lenght_buffer = self.convert_distance()
+
+        line_geometry.transform(transform)
+        buffer_geometry = line_geometry.buffer(
+            distance=lenght_buffer,
+            segments=10,
+            endCapStyle=self.__cap_style,
+            joinStyle=self.__join_style,
+            miterLimit=2,
+        )
+
+        buffer_geometry.transform(
+            transform, QgsCoordinateTransform.ReverseTransform
+        )
+
+        return buffer_geometry
 
     def __is_layer_suitable(self, layer: QgsVectorLayer) -> bool:
         PolygonGeometry = QgsWkbTypes.GeometryType.PolygonGeometry
