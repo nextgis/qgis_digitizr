@@ -70,15 +70,15 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
     def set_buffer_size(self, size: float) -> None:
         self.__buffer_size = size
-        self.__repainting_rubberband()
+        self.__repaint_rubberband()
 
     def set_cap_style(self, cap_style: Qgis.EndCapStyle) -> None:
         self.__cap_style = cap_style
-        self.__repainting_rubberband()
+        self.__repaint_rubberband()
 
     def set_join_style(self, join_style: Qgis.JoinStyle) -> None:
         self.__join_style = join_style
-        self.__repainting_rubberband()
+        self.__repaint_rubberband()
 
     def convert_distance(self):
         project = QgsProject.instance()
@@ -95,16 +95,8 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         if not self.isCapturing():
             return
 
-        vlayer = self.currentVectorLayer()
-
-        curve = QgsCompoundCurve(self.captureCurve())
-        self.last_position = QgsPoint(event.mapPoint())
-        curve.addVertex(self.last_position)
-        line_geometry = QgsGeometry(curve)
-
-        self.__rubber_band.reset()
-        buffer_geometry = self.__create_buffer(line_geometry)
-        self.__rubber_band.setToGeometry(buffer_geometry, vlayer)
+        self.__last_position = QgsPoint(event.mapPoint())
+        self.__repaint_rubberband()
         super().cadCanvasMoveEvent(event)
 
     def cadCanvasReleaseEvent(self, event: QgsMapMouseEvent) -> None:
@@ -186,14 +178,14 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
         return buffer_geometry
 
-    def __repainting_rubberband(self):
+    def __repaint_rubberband(self):
         if not self.isCapturing():
             return
 
         vlayer = self.currentVectorLayer()
 
         curve = QgsCompoundCurve(self.captureCurve())
-        curve.addVertex(self.last_position)
+        curve.addVertex(self.__last_position)
         line_geometry = QgsGeometry(curve)
 
         buffer_geometry = self.__create_buffer(line_geometry)
