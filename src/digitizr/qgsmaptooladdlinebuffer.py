@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Optional, cast
 
 from qgis.core import (
     Qgis,
@@ -22,6 +22,7 @@ from qgis.gui import (
     QgsRubberBand,
 )
 from qgis.PyQt.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtGui import QKeyEvent
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface
 
@@ -47,6 +48,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         self.__buffer_size = 10.0
         self.__cap_style = Qgis.EndCapStyle.Round
         self.__join_style = Qgis.JoinStyle.Round
+        self.__last_position = None
 
         self.__rubber_band = QgsRubberBand(
             self.canvas(), QgsWkbTypes.PolygonGeometry
@@ -95,8 +97,11 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         if not self.isCapturing():
             return
 
-        self.__last_position = QgsPoint(event.mapPoint())
+        self.__last_position = QgsPoint(
+            self.toLayerCoordinates(self.layer(), event.mapPoint())
+        )
         self.__repaint_rubberband()
+
         super().cadCanvasMoveEvent(event)
 
     def cadCanvasReleaseEvent(self, event: QgsMapMouseEvent) -> None:
@@ -113,13 +118,13 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             self.addVertex(event.mapPoint(), event.mapPointMatch())
             # TODO Process error
             self.startCapturing()
-            line_geometry = QgsGeometry(self.captureCurve().curveToLine())
-            self.__rubber_band.setToGeometry(
-                self.__create_buffer(line_geometry), vlayer
-            )
+            self.__last_position = None
+            self.__repaint_rubberband()
             return
+
         elif event.button() != Qt.MouseButton.RightButton:
             self.deleteTempRubberBand()
+            self.__rubber_band.reset()
             return
 
         line_geometry = QgsGeometry(self.captureCurve().curveToLine())
@@ -134,6 +139,20 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         vlayer.addFeature(f)
         vlayer.endEditCommand()
         self.canvas().refresh()
+
+    def keyPressEvent(self, e: Optional[QKeyEvent]) -> None:
+        need_repaint = False
+
+        if e.key() == Qt.Key.Key_Escape:
+            self.__rubber_band.reset()
+
+        elif e.key() in (Qt.Key.Key_Backspace, Qt.Key.Key_Delete):
+            need_repaint = True
+
+        super().keyPressEvent(e)
+
+        if need_repaint:
+            self.__repaint_rubberband()
 
     def checkAvailability(self):
         self.availabilityChanged.emit(self.isAvalable())
@@ -161,11 +180,11 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             QgsProject.instance(),
         )
 
-        lenght_buffer = self.convert_distance()
+        length_buffer = self.convert_distance()
 
         line_geometry.transform(transform)
         buffer_geometry = line_geometry.buffer(
-            distance=lenght_buffer,
+            distance=length_buffer,
             segments=10,
             endCapStyle=self.__cap_style,
             joinStyle=self.__join_style,
@@ -180,12 +199,14 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
 
     def __repaint_rubberband(self):
         if not self.isCapturing():
+            self.__rubber_band.reset()
             return
 
         vlayer = self.currentVectorLayer()
 
         curve = QgsCompoundCurve(self.captureCurve())
-        curve.addVertex(self.__last_position)
+        if self.__last_position is not None:
+            curve.addVertex(self.__last_position)
         line_geometry = QgsGeometry(curve)
 
         buffer_geometry = self.__create_buffer(line_geometry)
@@ -203,4 +224,5 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         Capability = QgsVectorDataProvider.Capability
         if not bool(data_provider.capabilities() & Capability.AddFeatures):
             return False
+
         return True
