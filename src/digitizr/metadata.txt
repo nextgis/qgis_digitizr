@@ -6,11 +6,14 @@ description=Digitize a line and have a buffer around it immediately
 description[ru]=Оцифруйте линию и немедленно создайте вокруг нее буфер
 about=Digitize a line and have a buffer around it immediately at set width stored in a polygonal layer. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
 about[ru]=Оцифруйте линию и немедленно создайте вокруг нее буфер заданной ширины, хранящийся в полигональном слое. Разработан компанией NextGIS. Любые отзывы приветствуются на https://nextgis.com/contact
-version=1.0.1
+version=1.1.0
 author=NextGIS
 email=info@nextgis.com
 
 changelog=
+  1.1.0
+    * Added buffer display during digitization
+    * Fixed bugs
   1.0.1
     * Bug fixes
   1.0.0
