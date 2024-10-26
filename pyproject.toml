@@ -9,7 +9,7 @@ license = { file = "LICENSE" }
 "digitizr.icons" = ["line_buffer.svg", "settings.svg"]
 
 [tool.qgspb.forms]
-ui-files = ["src/digitizr/*.ui"]
+ui-files = ["src/digitizr/ui/*.ui"]
 compile = false
 
 [tool.qgspb.translations]
