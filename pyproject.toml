@@ -84,4 +84,6 @@ extend-ignore-names = [
     "sizeHint",
     "createWidget",
     "*Event",
+    "cadCanvasMoveEvent",
+    "cadCanvasReleaseEvent"
 ]
