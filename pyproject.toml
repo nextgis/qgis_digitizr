@@ -1,12 +1,12 @@
 [project]
 name = "digitizr"
-version = "1.1.0"
+version = "1.2.0"
 readme = "README.md"
 license = { file = "LICENSE" }
 
 
 [tool.qgspb.package-data]
-"digitizr.icons" = ["line_buffer.svg", "settings.svg"]
+"digitizr.icons" = ["*.svg"]
 
 [tool.qgspb.forms]
 ui-files = ["src/digitizr/ui/*.ui"]
