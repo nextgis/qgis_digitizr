@@ -172,6 +172,15 @@ class DigitizrPlugin:
         digitizr_menu.addAction(self.__about_action)
         tool_button.setMenu(digitizr_menu)
 
+        self.__show_help_action = QAction(
+            QIcon(os.path.join(ICONS_DIR, "line_buffer.svg")),
+            "Digitizr",
+        )
+        self.__show_help_action.triggered.connect(self.__open_about_dialog)
+        plugin_help_menu = self._iface.pluginHelpMenu()
+        assert plugin_help_menu is not None
+        plugin_help_menu.addAction(self.__show_help_action)
+
     def __init_size_spin_box(self, settings: DigitizrSettings) -> None:
         assert self.__toolbar is not None
         size_spinbox = QgsDoubleSpinBox()
