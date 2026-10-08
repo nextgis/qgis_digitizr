@@ -31,6 +31,7 @@ class DigitizrPlugin:
     __toolbar: Optional[QToolBar]
     __tool_action: Optional[QAction]
     __about_action: Optional[QAction]
+    __show_help_action: Optional[QAction]
     __cap_combobox: Optional[QComboBox]
     __join_combobox: Optional[QComboBox]
 
@@ -42,6 +43,7 @@ class DigitizrPlugin:
         self.__toolbar = None
         self.__tool_action = None
         self.__about_action = None
+        self.__show_help_action = None
         self.__cap_combobox = None
         self.__join_combobox = None
 
@@ -63,7 +65,27 @@ class DigitizrPlugin:
         self.toolAddLineBuffer.checkAvailability()
 
     def unload(self):
+        canvas = self._iface.mapCanvas()
+        assert canvas is not None
+        canvas.mapToolSet.disconnect(self.__on_map_tool_set)
+
+        if canvas.mapTool() == self.toolAddLineBuffer:
+            canvas.unsetMapTool(self.toolAddLineBuffer)
+        self.toolAddLineBuffer.deactivate()
+        self.toolAddLineBuffer.deleteLater()
+
         self.__unload_toolbar()
+
+        if self.__show_help_action is not None:
+            plugin_help_menu = self._iface.pluginHelpMenu()
+            assert plugin_help_menu is not None
+            plugin_help_menu.removeAction(self.__show_help_action)
+            self.__show_help_action.deleteLater()
+            self.__show_help_action = None
+
+        if self.__translator is not None:
+            QCoreApplication.removeTranslator(self.__translator)
+            self.__translator = None
 
     def activateToolAddLineBuffer(self, status):
         assert self.__tool_action is not None
@@ -116,7 +138,7 @@ class DigitizrPlugin:
         ICONS_DIR = os.path.join(ROOT_DIR, "icons")
 
         # Button creation
-        tool_button = QToolButton(self._iface.mainWindow())
+        tool_button = QToolButton(self.__toolbar)
         tool_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
         tool_button.setPopupMode(
             QToolButton.ToolButtonPopupMode.MenuButtonPopup
@@ -130,7 +152,7 @@ class DigitizrPlugin:
 
         # Action creation
         self.__tool_action = QAction(
-            QIcon(os.path.join(ICONS_DIR, "line_buffer.svg")),
+            QIcon(os.path.join(ICONS_DIR, "digitizr.svg")),
             self.tr("Add line buffer"),
             tool_button,
         )
@@ -166,15 +188,18 @@ class DigitizrPlugin:
         digitizr_menu.addAction(widget_action)
         digitizr_menu.addSeparator()
         self.__about_action = QAction(
-            self.tr("About plugin…"), self._iface.mainWindow()
+            QgsApplication.getThemeIcon("mActionPropertiesWidget.svg"),
+            self.tr("About plugin…"),
+            digitizr_menu,
         )
         self.__about_action.triggered.connect(self.__open_about_dialog)
         digitizr_menu.addAction(self.__about_action)
         tool_button.setMenu(digitizr_menu)
 
         self.__show_help_action = QAction(
-            QIcon(os.path.join(ICONS_DIR, "line_buffer.svg")),
+            QIcon(os.path.join(ICONS_DIR, "digitizr.svg")),
             "Digitizr",
+            self._iface.mainWindow(),
         )
         self.__show_help_action.triggered.connect(self.__open_about_dialog)
         plugin_help_menu = self._iface.pluginHelpMenu()
@@ -183,7 +208,7 @@ class DigitizrPlugin:
 
     def __init_size_spin_box(self, settings: DigitizrSettings) -> None:
         assert self.__toolbar is not None
-        size_spinbox = QgsDoubleSpinBox()
+        size_spinbox = QgsDoubleSpinBox(self.__toolbar)
         size_spinbox.setDecimals(2)
         size_spinbox.setMaximum(99999999.99)
         size_spinbox.setValue(settings.buffer_size)
@@ -264,6 +289,7 @@ class DigitizrPlugin:
         self.__tool_action = None
         self.__about_action = None
         self.__toolbar.hide()
+        self._iface.mainWindow().removeToolBar(self.__toolbar)
         self.__toolbar.deleteLater()
         self.__toolbar = None
 

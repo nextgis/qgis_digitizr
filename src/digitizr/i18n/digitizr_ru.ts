@@ -14,6 +14,11 @@
         <translation>Домашняя страница</translation>
     </message>
     <message>
+        <location filename="../about_dialog.py" line="218"/>
+        <source>User Guide</source>
+        <translation>Руководство пользователя</translation>
+    </message>
+    <message>
         <location filename="../about_dialog.py" line="206"/>
         <source>Please report bugs at</source>
         <translation>Пожалуйста, сообщайте о багах в</translation>
@@ -108,6 +113,11 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>DigitizrPlugin</name>
+    <message>
+        <location filename="../plugin.py" line="180"/>
+        <source>&amp;Digitizr</source>
+        <translation>&amp;Digitizr</translation>
+    </message>
     <message>
         <location filename="../plugin.py" line="132"/>
         <source>Add line buffer</source>

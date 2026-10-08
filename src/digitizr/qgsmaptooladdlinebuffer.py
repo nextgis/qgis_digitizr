@@ -11,7 +11,6 @@ from qgis.core import (
     QgsProject,
     QgsVectorDataProvider,
     QgsVectorLayer,
-    QgsWkbTypes,
 )
 from qgis.gui import (
     QgisInterface,
@@ -51,7 +50,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         self.__last_position = None
 
         self.__rubber_band = QgsRubberBand(
-            self.canvas(), QgsWkbTypes.PolygonGeometry
+            self.canvas(), Qgis.GeometryType.Polygon
         )
         self.__rubber_band.setFillColor(self.digitizingFillColor())
         self.__rubber_band.setStrokeColor(self.digitizingStrokeColor())
@@ -191,9 +190,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
             miterLimit=2,
         )
 
-        buffer_geometry.transform(
-            transform, QgsCoordinateTransform.ReverseTransform
-        )
+        buffer_geometry.transform(transform, Qgis.TransformDirection.Reverse)
 
         return buffer_geometry
 
@@ -213,8 +210,7 @@ class QgsMapToolAddLineBuffer(QgsMapToolCapture):
         self.__rubber_band.setToGeometry(buffer_geometry, vlayer)
 
     def __is_layer_suitable(self, layer: QgsVectorLayer) -> bool:
-        PolygonGeometry = QgsWkbTypes.GeometryType.PolygonGeometry
-        if layer.geometryType() != PolygonGeometry:
+        if layer.geometryType() != Qgis.GeometryType.Polygon:
             return False
 
         data_provider = layer.dataProvider()

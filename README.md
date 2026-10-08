@@ -2,7 +2,7 @@
 
 A QGIS plugin. Draw a line and output it as a polygon automatically buffered with a given buffer size. Expects an existing and active polygon layer.
 
-QGIS plugins page: https://plugins.qgis.org/plugins/copy_coords/ 
+QGIS plugins page: https://plugins.qgis.org/plugins/digitizr/
 
 ## Digitize a line to create a polygon buffer
 

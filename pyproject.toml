@@ -5,16 +5,20 @@ readme = "README.md"
 license = { file = "LICENSE" }
 
 
-[tool.qgspb.package-data]
+[tool.qgsmith.package-data]
 "digitizr.icons" = ["*.svg"]
 
-[tool.qgspb.forms]
+[tool.qgsmith.forms]
 ui-files = ["src/digitizr/ui/*.ui"]
 compile = false
 
-[tool.qgspb.translations]
+[tool.qgsmith.translations]
 ts-files = ["src/digitizr/i18n/*.ts"]
 no-obsolete = true
+
+[tool.bandit]
+exclude_dirs = ["tests", "setup.py"]
+skips = ["B101"]
 
 
 [project.optional-dependencies]
@@ -22,27 +26,27 @@ dev = ["ruff", "pre-commit"]
 
 [tool.pyright]
 include = ["src"]
-pythonVersion = "3.7"
+pythonVersion = "3.8"
 
 reportOptionalCall = false
 reportOptionalMemberAccess = false
 
 [tool.ruff]
 line-length = 79
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.lint]
 select = [
     # "A", # flake8-builtins
     # "ARG",  # flake8-unused-arguments
-    # "B", # flake8-bugbear
+    "B", # flake8-bugbear
     # "C90",  # mccabe complexity
     # "COM",  # flake8-commas
-    # "E", # pycodestyle errors
-    # "F", # pyflakes
+    "E", # pycodestyle errors
+    "F", # pyflakes
     # "FBT",  # flake8-boolean-trap
     # "FLY",  # flynt
-    # "I", # isort
+    "I", # isort
     # "ISC",  #  flake8-implicit-str-concat
     # "LOG",  # flake8-logging
     # "N",    # pep8-naming
@@ -55,7 +59,7 @@ select = [
     # "Q",   # flake8-quotes
     # "RET", # flake8-return
     # "RSE", # flake8-raise
-    # "RUF",
+    "RUF",
     # "SIM", # flake8-simplify
     # "SLF", # flake8-self
     # "T10", # flake8-debugger
@@ -64,17 +68,18 @@ select = [
     # "TD",  # flake8-todos
     # "TID", # flake8-tidy-imports
     # "TRY", # tryceratops
-    # "UP", # pyupgrade
-    # "W",  # pycodesytle warnings
+    "UP", # pyupgrade
+    "W",  # pycodestyle warnings
     # "ANN",  # flake8-annotations
     # "CPY",  # flake8-copyright
     # "D",  # pydocstyle
     # "FIX",  # flake8-fixme
 ]
-ignore = ["ANN101", "ANN102", "TD003", "FBT003", "ISC001", "COM812", "E501"]
+ignore = ["TD003", "FBT003", "ISC001", "COM812", "E501", "RUF001"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
+"setup.py" = ["ALL"]
 
 [tool.ruff.lint.pep8-naming]
 extend-ignore-names = [
