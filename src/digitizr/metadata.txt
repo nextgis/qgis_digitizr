@@ -7,7 +7,7 @@ description=Digitize a line and have a buffer around it immediately
 description[ru]=Оцифруйте линию и немедленно создайте вокруг нее буфер
 about=Digitize a line and have a buffer around it immediately at set width stored in a polygonal layer. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
 about[ru]=Оцифруйте линию и немедленно создайте вокруг нее буфер заданной ширины, хранящийся в полигональном слое. Разработан компанией NextGIS. Любые отзывы приветствуются на https://nextgis.com/contact
-version=1.2.0
+version=1.3.0
 author=NextGIS
 email=info@nextgis.com
 
@@ -25,6 +25,13 @@ video=https://www.youtube.com/watch?v=VazQzb4IHQ0
 video[ru]=https://www.youtube.com/watch?v=ZdmutlYZhl8
 
 changelog=
+  1.3.0
+    * Added compatibility with QGIS 4.0+
+    * Fixed QGIS 4 enum compatibility issues
+    * Updated the About dialog
+    * Improved plugin unload cleanup
+    * Updated plugin metadata, logo, links, translations, and branding
+    * Modernized build and development tooling
   1.2.0
     * Updated the "About plugin" dialog
     * Added plugin item to help menu
